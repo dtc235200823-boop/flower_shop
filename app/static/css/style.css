@@ -1,0 +1,171 @@
+/* Main CSS Styles */
+:root {
+    --primary-color: #e74c3c;
+    --secondary-color: #27ae60;
+    --light-gray: #f8f9fa;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-gray);
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    color: var(--primary-color) !important;
+    font-size: 1.5rem;
+}
+
+/* Product Cards */
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.product-card .card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-card .btn {
+    font-weight: 500;
+}
+
+/* Category Card */
+.category-card {
+    transition: all 0.3s;
+    border: none;
+}
+
+.category-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Hero Section */
+.jumbotron {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 10px;
+}
+
+/* Hover Shadow */
+.hover-shadow {
+    transition: box-shadow 0.3s;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 8px;
+    border: none;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Forms */
+.form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+/* Table */
+.table {
+    margin-bottom: 0;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+/* Badge */
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: #999;
+}
+
+/* Rating */
+.rating i {
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: var(--primary-color);
+}
+
+.pagination .page-link:hover {
+    color: #c0392b;
+    background-color: #f8f9fa;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-card .card-img-top {
+        height: 200px;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}

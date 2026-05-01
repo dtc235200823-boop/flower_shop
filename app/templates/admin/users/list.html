@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Quản Lý Người Dùng - Admin{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">
+    <i class="fas fa-users"></i> Quản Lý Người Dùng
+</h1>
+
+<div class="card shadow">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên Đăng Nhập</th>
+                    <th>Email</th>
+                    <th>Họ Tên</th>
+                    <th>Vai Trò</th>
+                    <th>Trạng Thái</th>
+                    <th>Ngày Tạo</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users.items %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.full_name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.edit_user_role', user_id=user.id) }}" class="d-inline">
+                                <select name="role" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit();">
+                                    <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Khách hàng</option>
+                                    <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Nhân viên</option>
+                                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Quản trị</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge bg-success">Kích hoạt</span>
+                            {% else %}
+                                <span class="badge bg-danger">Tắt</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.toggle_user_active', user_id=user.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-{% if user.is_active %}danger{% else %}success{% endif %}">
+                                    {% if user.is_active %}
+                                        <i class="fas fa-lock"></i> Vô hiệu
+                                    {% else %}
+                                        <i class="fas fa-unlock"></i> Kích hoạt
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

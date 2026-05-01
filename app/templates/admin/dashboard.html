@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Cửa Hàng Hoa Tươi{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">
+    <i class="fas fa-tachometer-alt"></i> Bảng Điều Khiển Quản Trị
+</h1>
+
+<!-- Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Tổng Đơn Hàng</h5>
+                <p class="display-4">{{ total_orders }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Tổng Doanh Thu</h5>
+                <p class="display-6">{{ "{:,.0f}".format(total_revenue) }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Đơn Chờ Xác Nhận</h5>
+                <p class="display-4">{{ pending_orders }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Tổng Sản Phẩm</h5>
+                <p class="display-4">{{ products_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <a href="{{ url_for('product.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm Sản Phẩm
+        </a>
+        <a href="{{ url_for('admin.create_category') }}" class="btn btn-info">
+            <i class="fas fa-plus"></i> Thêm Danh Mục
+        </a>
+        <a href="{{ url_for('admin.reports') }}" class="btn btn-warning">
+            <i class="fas fa-chart-bar"></i> Xem Báo Cáo
+        </a>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="card shadow">
+    <div class="card-header">
+        <h5 class="mb-0">Đơn Hàng Gần Đây</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Khách Hàng</th>
+                    <th>Trạng Thái</th>
+                    <th>Tổng Tiền</th>
+                    <th>Ngày Đặt</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                    <tr>
+                        <td><code>{{ order.order_number }}</code></td>
+                        <td>{{ order.customer.full_name }}</td>
+                        <td>
+                            {% if order.status == 'pending' %}
+                                <span class="badge bg-warning">Chờ</span>
+                            {% elif order.status == 'confirmed' %}
+                                <span class="badge bg-info">Xác nhận</span>
+                            {% elif order.status == 'processing' %}
+                                <span class="badge bg-primary">Xử lý</span>
+                            {% elif order.status == 'shipped' %}
+                                <span class="badge bg-secondary">Gửi</span>
+                            {% elif order.status == 'delivered' %}
+                                <span class="badge bg-success">Giao</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ "{:,.0f}".format(order.total_amount) }}</td>
+                        <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('order.view_order', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">Chi Tiết</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

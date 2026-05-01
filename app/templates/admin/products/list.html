@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Quản Lý Sản Phẩm - Admin{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-8">
+        <h1>
+            <i class="fas fa-boxes"></i> Quản Lý Sản Phẩm
+        </h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('product.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm Sản Phẩm
+        </a>
+    </div>
+</div>
+
+<!-- Search & Filter -->
+<div class="card shadow mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('product.manage') }}" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Tìm kiếm sản phẩm..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <select name="category" class="form-select">
+                    <option value="0">Tất cả danh mục</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if current_category == cat.id %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Tìm
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 80px;">Hình Ảnh</th>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Danh Mục</th>
+                    <th>Giá</th>
+                    <th style="width: 80px;">Số Lượng</th>
+                    <th style="width: 80px;">Trạng Thái</th>
+                    <th style="width: 200px;">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products.items %}
+                    <tr>
+                        <td>
+                            {% if product.image %}
+                                <img src="{{ url_for('static', filename='uploads/' + product.image) }}" 
+                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
+                                     alt="{{ product.name }}" title="{{ product.name }}">
+                            {% else %}
+                                <div style="width: 60px; height: 60px; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ product.name }}</strong>
+                            {% if product.is_featured %}
+                                <br><span class="badge bg-warning text-dark">Nổi bật</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ product.category.name }}</td>
+                        <td>
+                            <strong class="text-danger">{{ "{:,.0f}".format(product.price) }} VND</strong>
+                        </td>
+                        <td>
+                            {% if product.stock > 10 %}
+                                <span class="badge bg-success">{{ product.stock }}</span>
+                            {% elif product.stock > 0 %}
+                                <span class="badge bg-warning">{{ product.stock }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">0</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.is_active %}
+                                <span class="badge bg-success">Kích hoạt</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Tắt</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('product.detail', product_id=product.id) }}" class="btn btn-sm btn-info" title="Xem">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('product.edit', product_id=product.id) }}" class="btn btn-sm btn-warning" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteProduct({{ product.id }}, '{{ product.name }}');" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            Không tìm thấy sản phẩm nào
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if products.pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center">
+            {% if products.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('product.manage', page=products.prev_num, q=search_query, category=current_category) }}">Trước</a>
+                </li>
+            {% endif %}
+            
+            {% for page_num in products.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == products.page %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('product.manage', page=page_num, q=search_query, category=current_category) }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            
+            {% if products.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('product.manage', page=products.next_num, q=search_query, category=current_category) }}">Tiếp</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+
+<!-- Delete Confirmation Modal -->
+<form id="deleteForm" method="POST" style="display:none;">
+</form>
+
+<script>
+function deleteProduct(productId, productName) {
+    if (confirm(`Bạn chắc chắn muốn xóa sản phẩm "${productName}"? Hành động này không thể hoàn tác.`)) {
+        const form = document.getElementById('deleteForm');
+        form.action = `/products/${productId}/delete`;
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

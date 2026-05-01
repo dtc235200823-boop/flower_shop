@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Chi Tiết Đơn Hàng - {{ order.order_number }}{% endblock %}
+
+{% block content %}
+<h1>
+    <i class="fas fa-receipt"></i> Đơn Hàng {{ order.order_number }}
+</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Thông Tin Đơn Hàng</h5>
+                        <p><strong>Mã:</strong> {{ order.order_number }}</p>
+                        <p><strong>Ngày đặt:</strong> {{ order.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                        <p><strong>Cập nhật:</strong> {{ order.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Trạng Thái</h5>
+                        <p>
+                            {% if order.status == 'pending' %}
+                                <span class="badge bg-warning">Chờ xác nhận</span>
+                            {% elif order.status == 'confirmed' %}
+                                <span class="badge bg-info">Đã xác nhận</span>
+                            {% elif order.status == 'processing' %}
+                                <span class="badge bg-primary">Đang xử lý</span>
+                            {% elif order.status == 'shipped' %}
+                                <span class="badge bg-secondary">Đã gửi</span>
+                            {% elif order.status == 'delivered' %}
+                                <span class="badge bg-success">Đã giao</span>
+                            {% elif order.status == 'cancelled' %}
+                                <span class="badge bg-danger">Đã hủy</span>
+                            {% endif %}
+                        </p>
+                        <p>
+                            {% if order.payment_status == 'pending' %}
+                                <span class="badge bg-warning">Chưa thanh toán</span>
+                            {% elif order.payment_status == 'paid' %}
+                                <span class="badge bg-success">Đã thanh toán</span>
+                            {% elif order.payment_status == 'failed' %}
+                                <span class="badge bg-danger">Thanh toán thất bại</span>
+                            {% elif order.payment_status == 'refunded' %}
+                                <span class="badge bg-info">Đã hoàn lại</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h5>Thông Tin Giao Hàng</h5>
+                <p><strong>Địa chỉ:</strong> {{ order.delivery_address }}</p>
+                <p><strong>Thành phố:</strong> {{ order.delivery_city }}</p>
+                <p><strong>Mã bưu điện:</strong> {{ order.delivery_postal_code }}</p>
+                <p><strong>Số điện thoại:</strong> {{ order.delivery_phone }}</p>
+                {% if order.notes %}
+                    <p><strong>Ghi chú:</strong> {{ order.notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản Phẩm</th>
+                            <th>Giá</th>
+                            <th>Số Lượng</th>
+                            <th>Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ "{:,.0f}".format(item.unit_price) }} VND</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ "{:,.0f}".format(item.total_price) }} VND</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Tóm Tắt Đơn Hàng</h5>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span>{{ "{:,.0f}".format(order.total_amount - order.tax - order.shipping_cost + order.discount) }} VND</span>
+                    </div>
+                    {% if order.tax %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Thuế:</span>
+                            <span>{{ "{:,.0f}".format(order.tax) }} VND</span>
+                        </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí giao hàng:</span>
+                        <span>{{ "{:,.0f}".format(order.shipping_cost) }} VND</span>
+                    </div>
+                    {% if order.discount %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Giảm giá:</span>
+                            <span class="text-success">-{{ "{:,.0f}".format(order.discount) }} VND</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <strong>Tổng cộng:</strong>
+                    <strong class="text-danger fs-5">{{ "{:,.0f}".format(order.total_amount) }} VND</strong>
+                </div>
+                
+                {% if order.status not in ['delivered', 'cancelled'] %}
+                    <form method="POST" action="{{ url_for('order.cancel_order', order_id=order.id) }}" class="mt-3">
+                        <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?')">
+                            <i class="fas fa-times"></i> Hủy Đơn Hàng
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

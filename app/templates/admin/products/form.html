@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}{% if product %}Sửa{% else %}Thêm{% endif %} Sản Phẩm - Admin{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-0">
+            <i class="fas fa-plus-circle"></i> 
+            {% if product %}
+                Sửa Sản Phẩm
+            {% else %}
+                Thêm Sản Phẩm Mới
+            {% endif %}
+        </h1>
+        <p class="text-muted">
+            {% if product %}
+                Cập nhật thông tin cho: <strong>{{ product.name }}</strong>
+            {% else %}
+                Tạo sản phẩm mới cho cửa hàng
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- Tên sản phẩm -->
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label fw-bold") }}
+                        {% if form.name.errors %}
+                            {{ form.name(class="form-control is-invalid") }}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.name.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.name(class="form-control") }}
+                        {% endif %}
+                        <small class="form-text text-muted">Tên sản phẩm để hiển thị trên website</small>
+                    </div>
+                    
+                    <!-- Mô tả -->
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label fw-bold") }}
+                        {{ form.description(class="form-control", rows=4, placeholder="Mô tả chi tiết về sản phẩm...") }}
+                        <small class="form-text text-muted">Mô tả sản phẩm (hỗ trợ Text không hỗ trợ HTML)</small>
+                    </div>
+                    
+                    <!-- Danh mục & Giá -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.category_id.label(class="form-label fw-bold") }}
+                            {{ form.category_id(class="form-select") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.price.label(class="form-label fw-bold") }}
+                            <div class="input-group">
+                                {{ form.price(class="form-control") }}
+                                <span class="input-group-text">VND</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Số lượng & Màu -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.stock.label(class="form-label fw-bold") }}
+                            {{ form.stock(class="form-control") }}
+                            <small class="form-text text-muted">Số bó/gói trong kho</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.color.label(class="form-label fw-bold") }}
+                            {{ form.color(class="form-control", placeholder="vd: Đỏ, Trắng, Hồng...") }}
+                        </div>
+                    </div>
+                    
+                    <!-- Số lượng & Xuất xứ -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.quantity_per_item.label(class="form-label fw-bold") }}
+                            {{ form.quantity_per_item(class="form-control", placeholder="vd: 10 bông, 1 bó") }}
+                            <small class="form-text text-muted">Mỗi đơn vị chứa bao nhiêu bông/cây</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.origin.label(class="form-label fw-bold") }}
+                            {{ form.origin(class="form-control", placeholder="vd: Việt Nam, Hà Lan") }}
+                        </div>
+                    </div>
+                    
+                    <!-- Hình ảnh -->
+                    <div class="mb-3">
+                        {{ form.image.label(class="form-label fw-bold") }}
+                        <input type="file" name="image" id="imageInput" class="form-control" accept="image/*">
+                        <small class="form-text text-muted">Định dạng: JPG, PNG, GIF (Max 16MB)</small>
+                        {% if product and product.image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Ảnh hiện tại:</small>
+                                <br>
+                                <img src="{{ url_for('static', filename='uploads/' + product.image) }}" 
+                                     class="img-thumbnail mt-2" style="max-width: 150px;">
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Preview ảnh -->
+                    <div id="imagePreview" style="display:none;" class="mb-3">
+                        <small class="text-muted">Preview ảnh mới:</small>
+                        <br>
+                        <img id="previewImg" class="img-thumbnail mt-2" style="max-width: 150px;">
+                    </div>
+                    
+                    <!-- Các checkbox -->
+                    <div class="row mt-4 pt-3 border-top">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                {{ form.is_featured(class="form-check-input") }}
+                                {{ form.is_featured.label(class="form-check-label fw-bold") }}
+                                <br>
+                                <small class="text-muted">Hiển thị sản phẩm nổi bật trên trang chủ</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                {{ form.is_active(class="form-check-input") }}
+                                {{ form.is_active.label(class="form-check-label fw-bold") }}
+                                <br>
+                                <small class="text-muted">Sản phẩm có sẵn để bán</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Button -->
+                    <div class="d-grid gap-2 mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                    
+                    <div class="mt-2">
+                        <a href="{{ url_for('product.manage') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-arrow-left"></i> Quay Lại
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Panel -->
+    <div class="col-md-4">
+        <div class="card bg-light shadow">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-info-circle"></i> Hướng Dẫn
+                </h5>
+                <hr>
+                <p class="small mb-3">
+                    <strong>Tên sản phẩm:</strong> Phải duy nhất và mô tả rõ ràng
+                </p>
+                <p class="small mb-3">
+                    <strong>Giá:</strong> Nhập giá bán ra (không bao gồm phí vận chuyển)
+                </p>
+                <p class="small mb-3">
+                    <strong>Số lượng:</strong> Lượng hàng trong kho
+                </p>
+                <p class="small mb-3">
+                    <strong>Hình ảnh:</strong> Nên có định dạng vuông (1:1) để hiển thị đẹp
+                </p>
+                <hr>
+                <h6>Lưu ý:</h6>
+                <ul class="small">
+                    <li>Điền đầy đủ thông tin để tăng tỷ lệ bán</li>
+                    <li>Mô tả chi tiết giúp khách hiểu rõ sản phẩm</li>
+                    <li>Hình ảnh chất lượng cao rất quan trọng</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Preview ảnh
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('previewImg').src = event.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

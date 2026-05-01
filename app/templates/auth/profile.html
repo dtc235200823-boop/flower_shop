@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ Sơ - Cửa Hàng Hoa Tươi{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group sticky-top" style="top: 20px;">
+            <a href="{{ url_for('auth.profile') }}" class="list-group-item list-group-item-action active">
+                <i class="fas fa-user"></i> Thông Tin Cá Nhân
+            </a>
+            <a href="{{ url_for('auth.change_password') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-key"></i> Đổi Mật Khẩu
+            </a>
+            <a href="{{ url_for('order.my_orders') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-shopping-bag"></i> Đơn Hàng Của Tôi
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Cập Nhật Hồ Sơ</h3>
+                
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.full_name.label(class="form-label") }}
+                            {{ form.full_name(class="form-control") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.city.label(class="form-label") }}
+                            {{ form.city(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-9 mb-3">
+                            {{ form.address.label(class="form-label") }}
+                            {{ form.address(class="form-control", rows=3) }}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            {{ form.postal_code.label(class="form-label") }}
+                            {{ form.postal_code(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

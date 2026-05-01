@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Báo Cáo & Thống Kê - Admin{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">
+    <i class="fas fa-chart-bar"></i> Báo Cáo & Thống Kê
+</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body text-center">
+                <h5 class="card-title">Tổng Đơn Hàng</h5>
+                <p class="display-6">{{ total_orders }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body text-center">
+                <h5 class="card-title">Đơn Hoàn Thành</h5>
+                <p class="display-6">{{ completed_orders }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body text-center">
+                <h5 class="card-title">Đơn Chờ Xử Lý</h5>
+                <p class="display-6">{{ pending_orders }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title">Tổng Doanh Thu</h5>
+                <p class="display-6">{{ "{:,.0f}".format(total_revenue) }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Products -->
+<div class="card shadow mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Sản Phẩm Bán Chạy</h5>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for product in top_products %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ product.name }}</span>
+                        <span class="badge bg-primary">{{ product.total_sold }} bó bán</span>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted">Không có dữ liệu</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

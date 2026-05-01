@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Giỏ Hàng - Cửa Hàng Hoa Tươi{% endblock %}
+
+{% block content %}
+<h1>
+    <i class="fas fa-shopping-cart"></i> Giỏ Hàng Của Tôi
+</h1>
+
+{% if items %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Sản Phẩm</th>
+                    <th>Giá</th>
+                    <th>Số Lượng</th>
+                    <th>Thành Tiền</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('product.detail', product_id=item.product.id) }}">
+                                {{ item.product.name }}
+                            </a>
+                        </td>
+                        <td>{{ "{:,.0f}".format(item.product.price) }} VND</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('cart.update_cart', product_id=item.product.id) }}" class="d-inline">
+                                <div class="input-group" style="width: 120px;">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Cập Nhật</button>
+                                </div>
+                            </form>
+                        </td>
+                        <td>{{ "{:,.0f}".format(item.subtotal) }} VND</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('cart.remove_from_cart', product_id=item.product.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="row justify-content-end">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng Cộng</h5>
+                    <h3 class="text-danger">{{ "{:,.0f}".format(total) }} VND</h3>
+                    <a href="{{ url_for('order.checkout') }}" class="btn btn-primary w-100 mt-3">
+                        <i class="fas fa-credit-card"></i> Thanh Toán
+                    </a>
+                    <a href="{{ url_for('product.list') }}" class="btn btn-outline-secondary w-100 mt-2">
+                        Tiếp Tục Mua Sắm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <p>Giỏ hàng trống. <a href="{{ url_for('product.list') }}">Bắt đầu mua sắm</a></p>
+    </div>
+{% endif %}
+{% endblock %}

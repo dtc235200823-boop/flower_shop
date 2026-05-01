@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ Sơ Người Dùng - Cửa Hàng Hoa Tươi{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group sticky-top" style="top: 20px;">
+            <a href="{{ url_for('user.profile') }}" class="list-group-item list-group-item-action active">
+                <i class="fas fa-user"></i> Thông Tin
+            </a>
+            <a href="{{ url_for('auth.change_password') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-key"></i> Đổi Mật Khẩu
+            </a>
+            <a href="{{ url_for('order.my_orders') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-shopping-bag"></i> Đơn Hàng
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Thông Tin Hồ Sơ</h3>
+                
+                <div class="row mb-3">
+                    <label class="col-md-3 fw-bold">Tên Đăng Nhập:</label>
+                    <div class="col-md-9">{{ current_user.username }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label class="col-md-3 fw-bold">Email:</label>
+                    <div class="col-md-9">{{ current_user.email }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label class="col-md-3 fw-bold">Họ Tên:</label>
+                    <div class="col-md-9">{{ current_user.full_name or 'Chưa cập nhật' }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label class="col-md-3 fw-bold">Số Điện Thoại:</label>
+                    <div class="col-md-9">{{ current_user.phone or 'Chưa cập nhật' }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label class="col-md-3 fw-bold">Địa Chỉ:</label>
+                    <div class="col-md-9">{{ current_user.address or 'Chưa cập nhật' }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label class="col-md-3 fw-bold">Thành Phố:</label>
+                    <div class="col-md-9">{{ current_user.city or 'Chưa cập nhật' }}</div>
+                </div>
+                
+                <div class="row mb-4">
+                    <label class="col-md-3 fw-bold">Mã Bưu Điện:</label>
+                    <div class="col-md-9">{{ current_user.postal_code or 'Chưa cập nhật' }}</div>
+                </div>
+                
+                <a href="{{ url_for('auth.profile') }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Chỉnh Sửa
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

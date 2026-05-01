@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Trang Chủ - Cửa Hàng Hoa Tươi{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="jumbotron bg-gradient-primary text-white py-5 rounded">
+    <h1 class="display-4">Chào Mừng Đến Cửa Hàng Hoa Tươi</h1>
+    <p class="lead">Những bông hoa tươi, đẹp nhất dành cho những người bạn yêu thương</p>
+    <a href="{{ url_for('product.list') }}" class="btn btn-light btn-lg">Mua Sắm Ngay</a>
+</div>
+
+<!-- Featured Products -->
+<section class="py-4">
+    <h2 class="mb-4">
+        <i class="fas fa-star"></i> Sản Phẩm Nổi Bật
+    </h2>
+    <div class="row">
+        {% for product in featured_products %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 product-card hover-shadow">
+                    {% if product.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted small">{{ product.quantity_per_item }}</p>
+                        <p class="text-warning">
+                            {% for i in range(product.get_rating() | int) %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            <small>({{ product.get_review_count() }} đánh giá)</small>
+                        </p>
+                        <h6 class="text-danger fw-bold">{{ "{:,.0f}".format(product.price) }} VND</h6>
+                        {% if product.is_in_stock() %}
+                            <form method="POST" action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" class="mt-3">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-shopping-cart"></i> Thêm Vào Giỏ
+                                </button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm w-100" disabled>Hết Hàng</button>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('product.detail', product_id=product.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                            Chi Tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Categories -->
+<section class="py-4 bg-light rounded my-4">
+    <h2 class="mb-4">
+        <i class="fas fa-list"></i> Danh Mục
+    </h2>
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-4 mb-3">
+                <div class="card text-center category-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text text-muted">{{ category.description }}</p>
+                        <a href="{{ url_for('main.search', category=category.id) }}" class="btn btn-outline-primary">
+                            Xem Danh Mục
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- All Products -->
+<section class="py-4">
+    <h2 class="mb-4">
+        <i class="fas fa-flower"></i> Tất Cả Sản Phẩm
+    </h2>
+    <div class="row">
+        {% for product in products.items %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 product-card hover-shadow">
+                    {% if product.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted small">{{ product.category.name }}</p>
+                        <h6 class="text-danger fw-bold">{{ "{:,.0f}".format(product.price) }} VND</h6>
+                        {% if product.is_in_stock() %}
+                            <form method="POST" action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" class="mt-2">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-shopping-cart"></i> Thêm Vào Giỏ
+                                </button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm w-100" disabled>Hết Hàng</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if products.pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if products.has_prev %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=products.prev_num) }}">Trước</a></li>
+                {% endif %}
+                
+                {% for page_num in products.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == products.page %}
+                            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if products.has_next %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=products.next_num) }}">Tiếp</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</section>
+{% endblock %}

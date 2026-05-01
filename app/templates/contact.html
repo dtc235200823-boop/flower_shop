@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Liên Hệ - Cửa Hàng Hoa Tươi{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Liên Hệ Chúng Tôi</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Gửi Tin Nhắn</h3>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Họ Tên</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Điện Thoại</label>
+                        <input type="tel" class="form-control" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tiêu Đề</label>
+                        <input type="text" class="form-control" name="subject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nội Dung</label>
+                        <textarea class="form-control" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gửi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Thông Tin Liên Hệ</h5>
+                <p>
+                    <i class="fas fa-map-marker-alt text-primary"></i> 
+                    123 Đường Ngô Quyền, Hà Nội
+                </p>
+                <p>
+                    <i class="fas fa-phone text-primary"></i> 
+                    (024) 1900-1234
+                </p>
+                <p>
+                    <i class="fas fa-mobile-alt text-primary"></i> 
+                    0901 234 567
+                </p>
+                <p>
+                    <i class="fas fa-envelope text-primary"></i> 
+                    info@flowershop.vn
+                </p>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Giờ Làm Việc</h5>
+                <p class="mb-1"><strong>Thứ 2 - Thứ 6:</strong> 8:00 - 21:00</p>
+                <p class="mb-1"><strong>Thứ 7:</strong> 9:00 - 22:00</p>
+                <p><strong>Chủ Nhật:</strong> 9:00 - 21:00</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
